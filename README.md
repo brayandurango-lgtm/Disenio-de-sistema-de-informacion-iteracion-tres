@@ -9,6 +9,8 @@
 | A. Abrir interfaz web | [Abrir interfaz web — ejecución local](http://localhost:5173/) |
 | B. Consultar diagramas y documentación UML | [Fuentes UML y guía de StarUML](full%20stack/docs/entrega-iteracion-3/diagramas/README.md) |
 
+La carpeta de diagramas reúne cuatro vistas complementarias: permisos de pago, recorrido seguro de una mensualidad, operación integrada de las tres iteraciones y arquitectura de componentes. Consulta allí el estado de cada fuente y los pasos para llevarla a StarUML.
+
 El acceso web requiere iniciar localmente frontend, backend y los servicios que
 use la configuración. No es una página publicada en Internet: solo responde
 desde el equipo/red donde se ejecuta. Vite solicita el puerto `5173`, pero

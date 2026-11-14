@@ -1,65 +1,110 @@
 @startuml
-title Recorrido integrado — iteraciones 1, 2 y 3 (auxiliar)
-actor Operador as O
-participant "SPA/vistas" as FE
-participant "Cliente API fetch" as API
-participant "Express routers" as R
-participant "Middleware JWT/rol" as M
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontColor #242238
+skinparam shadowing false
+skinparam sequence {
+  ArrowColor #55436F
+  LifeLineBorderColor #8C79A8
+  LifeLineBackgroundColor #F5F1FF
+  ParticipantBorderColor #7653A6
+  ParticipantBackgroundColor #F5F1FF
+  GroupBorderColor #9B83BD
+  GroupBackgroundColor #FBF9FF
+}
+title Un recorrido por las tres iteraciones
+actor Operador as Op
+boundary "Pantallas web" as UI
+control "Cliente API" as Client
+control "API Express\n(rutas del dominio)" as API
+control "Pool mysql2" as Pool
 database MySQL as DB
-O -> FE: Registrar cliente
-FE -> API: POST /api/clientes + Bearer
-API -> R: solicitud
-R -> M: autenticar
-R -> DB: INSERT cliente
-DB --> R: fila creada
-R --> API: 201 + ID
-API --> FE: respuesta JSON
-O -> FE: Crear vehículo y contrato
-FE -> API: POST /api/vehiculos, POST /api/contratos
-R -> M: autenticar
-R -> DB: INSERT; validar cliente y vigencia
-DB --> R: filas creadas
-R --> API: 201
-API --> FE: respuesta JSON
-O -> FE: Entrada/salida
-FE -> API: POST /api/estancias y POST /api/estancias/:id/salida
-R -> M: autenticar
-R -> DB: bloquear celda/vehículo; cerrar estancia
-DB --> R: resultado de consulta/operaciÃ³n
-R --> API: 200/201 o error
-API --> FE: respuesta JSON
-O -> FE: Generar obligaciones
-FE -> API: POST /api/contratos/:id/obligaciones/generar
-R -> M: autenticar
-R -> DB: transacción; validar vigencia; insertar faltantes/auditar
-DB --> R: generadas/omitidas
-R --> API: 201 + resumen
-API --> FE: respuesta JSON
-O -> FE: Pagar mensualidad
-FE -> API: POST /api/pagos + UUID
-R -> M: autenticar
-R -> DB: transacción; bloquear obligación; pago/estado/auditoría
-DB --> R: commit/rollback y filas
-R --> API: 201/200/error
-API --> FE: 201/200/error
-O -> FE: Consultar comprobante
-FE -> API: GET /api/pagos/:id/comprobante
-R -> M: autenticar
-R -> DB: SELECT
-DB --> R: datos del comprobante
-R --> API: 200 + comprobante
-API --> FE: comprobante interno
-O -> FE: Anular
-FE -> API: POST /api/pagos/:id/anular
-R -> M: autenticar + rol admin
-R -> DB: transacción; bloqueo; anular/pendiente/auditoría
-DB --> R: commit/rollback
-R --> API: 200/error
-API --> FE: respuesta JSON
-O -> FE: Re-pagar con clave nueva
-FE -> API: POST /api/pagos
-R -> DB: nueva transacción
-DB --> R: resultado del nuevo pago
-R --> API: 201/error
-API --> FE: respuesta JSON
+
+== Iteraciones 1 y 2 · Preparar el servicio ==
+Op -> UI: Registra cliente y vehículo
+UI -> Client: POST clientes; luego POST vehículos
+Client -> API: HTTP/JSON + Bearer
+API -> Pool: Validar y guardar registros
+Pool -> DB: INSERT cliente y vehículo
+DB --> Pool: Identificadores creados
+Pool --> API: Resultado de persistencia
+API --> Client: 201 + datos creados
+Client --> UI: Muestra registros
+
+note over Op,DB
+Antes de la entrada debe existir una celda habilitada.
+El operador puede consultar celdas y contratos disponibles.
+end note
+
+Op -> UI: Crea contrato de mensualidad
+UI -> Client: POST /api/contratos
+Client -> API: HTTP/JSON + Bearer
+API -> Pool: Validar cliente, vehículo y vigencia
+Pool -> DB: Consultar referencias e INSERT contrato
+DB --> Pool: Contrato creado
+Pool --> API: Resultado
+API --> Client: 201 + contrato
+Client --> UI: Confirma contrato
+
+== Iteración 1 · Registrar una estancia ==
+Op -> UI: Registra entrada del vehículo
+UI -> Client: POST /api/estancias
+Client -> API: HTTP/JSON + Bearer
+API -> Pool: Validar vehículo registrado y celda habilitada/libre
+Pool -> DB: Consultas y transacción de entrada
+DB --> Pool: Estancia abierta; celda ocupada
+Pool --> API: Resultado
+API --> Client: 201 + estancia
+Client --> UI: Confirma entrada
+
+Op -> UI: Registra salida
+UI -> Client: POST /api/estancias/:id/salida
+Client -> API: HTTP/JSON + Bearer
+API -> Pool: Cerrar estancia y liberar celda
+Pool -> DB: Transacción de salida
+DB --> Pool: Estancia cerrada
+Pool --> API: Resultado
+API --> Client: 200 + estancia cerrada
+Client --> UI: Confirma salida
+
+note over Op,UI
+La estancia registra entrada y salida; no calcula tarifa por horas.
+Una deuda puede generar una alerta informativa, no bloquear la operación.
+end note
+
+== Iteración 3 · Obligación y pago mensual ==
+Op -> UI: Solicita generar obligaciones del contrato
+UI -> Client: POST /api/contratos/:id/obligaciones/generar
+Client -> API: HTTP/JSON + Bearer
+API -> Pool: Validar vigencia y crear periodos faltantes
+Pool -> DB: Transacción de generación y auditoría
+DB --> Pool: Obligaciones generadas u omitidas
+Pool --> API: Resumen
+API --> Client: 201 + obligaciones
+Client --> UI: Muestra el resumen
+
+Op -> UI: Consulta obligación y confirma pago completo
+UI -> Client: GET obligaciones; luego POST pagos + UUID
+Client -> API: HTTP/JSON + Bearer
+API -> Pool: Autenticar, validar y registrar el pago
+Pool -> DB: Transacción; bloqueo; pago, comprobante y auditoría
+DB --> Pool: Pago confirmado
+Pool --> API: Resultado confirmado
+API --> Client: 201 (o 200 si es reintento equivalente)
+Client --> UI: Muestra confirmación
+
+Op -> UI: Abre historial o comprobante
+UI -> Client: GET /api/pagos o /api/pagos/:id/comprobante
+Client -> API: HTTP/JSON + Bearer
+API -> Pool: Consultar historial/detalle
+Pool -> DB: SELECT
+DB --> Pool: Registros de pago
+Pool --> API: Resultado
+API --> Client: 200 + datos
+Client --> UI: Presenta comprobante interno
+
+note over Op,DB
+Las mensualidades cubren periodos completos, no tiempo de estancia.
+Generar obligaciones es una acción explícita; este orden es ilustrativo.
+El detalle de idempotencia está en el diagrama “Pago e idempotencia”.
+end note
 @enduml

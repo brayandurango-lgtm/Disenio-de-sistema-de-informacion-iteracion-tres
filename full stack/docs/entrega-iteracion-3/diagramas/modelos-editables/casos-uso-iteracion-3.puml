@@ -1,26 +1,49 @@
 @startuml
 left to right direction
-actor Operador
-actor Administrador as Admin
-Admin --|> Operador
-rectangle "Autos Colombia — Gestión de Parqueadero" {
- usecase "Consultar obligaciones" as U1
- usecase "Generar obligaciones de contrato" as U6
- usecase "Registrar pago completo manual" as U2
- usecase "Consultar historial de pagos" as U3
- usecase "Consultar comprobante interno" as U7
- usecase "Anular pago con motivo" as U4
- usecase "Consultar resumen de deuda" as U5
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontColor #242238
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor #F5F1FF
+  BorderColor #7653A6
+  ArrowColor #55436F
 }
-Operador --> U1
-Operador --> U6
-Operador --> U2
-Operador --> U3
-Operador --> U7
-Operador --> U5
-Admin --> U4
-note bottom of U2
-Transferencia se registra manualmente. Sin confirmación bancaria.
-Comprobante interno, no factura electrónica.
+skinparam actorStyle stickman
+
+title Autos Colombia — Casos de uso de pagos
+
+actor Operador as Op
+actor Administrador as Admin
+Admin --|> Op
+
+rectangle "Sistema de gestión del parqueadero" {
+  usecase "Consultar obligaciones\ny mensualidades" as UC1
+  usecase "Generar obligaciones\ndel contrato" as UC2
+  usecase "Registrar pago completo\n(efectivo o transferencia)" as UC3
+  usecase "Consultar historial\nde pagos" as UC4
+  usecase "Consultar detalle y\ncomprobante interno" as UC5
+  usecase "Consultar resumen\nde deuda" as UC6
+  usecase "Anular pago\ncon motivo" as UC7
+}
+
+Op -- UC1
+Op -- UC2
+Op -- UC3
+Op -- UC4
+Op -- UC5
+Op -- UC6
+Admin -- UC7
+
+note bottom of UC3
+La transferencia se registra manualmente.
+No hay confirmación bancaria automática.
+El comprobante es interno; no es factura electrónica.
+end note
+
+note bottom of Op
+Precondición: iniciar sesión con una cuenta activa.
+El cliente del parqueadero es un dato del sistema,
+no un actor autenticado.
 end note
 @enduml
