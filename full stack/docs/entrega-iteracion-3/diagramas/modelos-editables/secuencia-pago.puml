@@ -1,41 +1,95 @@
 @startuml
-title Transacción de pago e idempotencia (auxiliar)
-actor Operador as O
-participant "Vista pagos" as FE
-participant "Cliente API" as API
-participant "Router Express pagos" as R
-participant "Middleware auth" as M
-database MySQL as DB
-O -> FE: Confirma obligación/método
-FE -> API: POST /api/pagos + Bearer + UUID
-API -> R: solicitud
-R -> M: validar JWT y usuario
-M --> R: identidad
-R -> R: validar ID/método/UUID/fecha
-R -> DB: BEGIN; SELECT obligación FOR UPDATE
-DB --> R: importe/estado
-alt UUID existente equivalente
- R -> DB: consultar pago por clave
- R -> DB: COMMIT
- R --> FE: 200 mismo pago
-else UUID existente con datos distintos
- R -> DB: ROLLBACK
- R --> FE: 409 IDEMPOTENCIA_CONFLICTO
-else obligación ya pagada
- R -> DB: ROLLBACK
- R --> FE: 409 OBLIGACION_YA_PAGADA
-else pendiente válido
- R -> DB: bloqueo secuencia; insertar pago con importe servidor
- R -> DB: actualizar obligación pagada
- R -> DB: insertar auditoría
- R -> DB: leer respuesta; COMMIT
- R --> FE: 201 + CMP-AAAA-NNNNNN
-else validación/fallo SQL
- R -> DB: ROLLBACK
- R --> FE: error estructurado
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontColor #242238
+skinparam shadowing false
+ skinparam dpi 180
+skinparam sequence {
+  ArrowColor #55436F
+  LifeLineBorderColor #8C79A8
+  LifeLineBackgroundColor #F5F1FF
+  ParticipantBorderColor #7653A6
+  ParticipantBackgroundColor #F5F1FF
+  GroupBorderColor #9B83BD
+  GroupBackgroundColor #FBF9FF
+}
+title Registrar una mensualidad con seguridad ante reintentos
+actor "Operador o administrador" as Usuario
+boundary "Vista de pagos" as Vista
+control "Cliente API (fetch)" as API
+control "Express: ruta de pagos" as Ruta
+control "Autenticación y rol" as Auth
+control "Pool mysql2" as Pool
+database "MySQL" as DB
+
+Usuario -> Vista: Revisa la obligación y confirma el medio
+Vista -> Vista: Crea UUID para este intento lógico
+Vista -> API: POST /api/pagos + Bearer + UUID
+API -> Ruta: Solicitud HTTP/JSON
+Ruta -> Auth: Validar JWT y cargar usuario activo
+Auth -> Pool: Consultar usuario y rol
+Pool -> DB: SELECT usuario
+DB --> Pool: Usuario activo
+Pool --> Auth: Identidad y rol vigentes
+Auth --> Ruta: Solicitud autenticada
+Ruta -> Ruta: Validar obligación, método, UUID y fecha
+Ruta -> Pool: Abrir transacción
+Pool -> DB: BEGIN
+Ruta -> Pool: Bloquear obligación
+Pool -> DB: SELECT obligación FOR UPDATE
+DB --> Pool: Estado e importe
+Ruta -> Pool: Buscar clave de idempotencia
+Pool -> DB: SELECT pago por clave
+DB --> Pool: Resultado de búsqueda
+
+alt Clave ya usada y solicitud equivalente
+  Ruta -> Pool: Leer datos del pago existente
+  Pool -> DB: SELECT detalle del pago
+  DB --> Pool: Pago y comprobante existentes
+  Ruta -> Pool: COMMIT
+  Pool -> DB: COMMIT
+  Ruta --> API: 200 + pago existente
+  API --> Vista: Resultado confirmado
+  Vista --> Usuario: Muestra el comprobante ya emitido
+else Clave reutilizada con otra obligación o método
+  Ruta -> Pool: Revertir transacción
+  Pool -> DB: ROLLBACK
+  Ruta --> API: Conflicto de idempotencia (409)
+  API --> Vista: Error de solicitud
+  Vista --> Usuario: Pide revisar el intento original
+else Obligación ya pagada
+  Ruta -> Pool: Revertir transacción
+  Pool -> DB: ROLLBACK
+  Ruta --> API: Obligación ya pagada (409)
+  API --> Vista: Error de negocio
+  Vista --> Usuario: Informa que la mensualidad ya está cubierta
+else Obligación pendiente y datos válidos
+  Ruta -> Ruta: Tomar importe de la obligación
+  Ruta -> Pool: Reservar consecutivo e insertar pago
+  Pool -> DB: INSERT/UPDATE secuencia; INSERT pago
+  Ruta -> Pool: Marcar obligación pagada y guardar auditoría
+  Pool -> DB: UPDATE obligación; INSERT auditoría
+  Ruta -> Pool: Leer pago completo y comprobante
+  Pool -> DB: SELECT detalle del pago
+  DB --> Pool: Pago registrado
+  Ruta -> Pool: COMMIT
+  Pool -> DB: COMMIT
+  Ruta --> API: 201 + pago y CMP-AAAA-NNNNNN
+  API --> Vista: Confirmación de registro
+  Vista --> Usuario: Muestra comprobante confirmado
+else Falla durante la operación
+  Ruta -> Pool: Revertir transacción
+  Pool -> DB: ROLLBACK
+  Ruta --> API: Error estructurado
+  API --> Vista: Error de operación
+  Vista --> Usuario: Informa que no se confirmó el resultado
 end
-note over FE
-Red perdida no prueba éxito ni rechazo.
-Retry en vista conserva UUID en memoria; recarga no garantizada.
+
+note over Vista,API
+Si la red deja la respuesta en duda, eso no demuestra que el pago falló.
+La vista reutiliza la misma clave para reintentar el mismo intento.
+El comprobante solo se presenta como confirmado al recibir o recuperar
+una respuesta exitosa del servidor. La clave se conserva en memoria;
+una recarga de página no garantiza recuperarla.
+La ruta actual coteja obligación y método al recuperar una clave existente; no compara todos los campos opcionales del payload.
 end note
 @enduml

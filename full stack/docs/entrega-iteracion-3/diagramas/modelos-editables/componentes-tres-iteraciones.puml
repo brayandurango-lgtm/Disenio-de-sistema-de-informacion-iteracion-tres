@@ -1,70 +1,75 @@
 @startuml
-title Componentes observados — auxiliar, no StarUML
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontColor #242238
+skinparam shadowing false
+ skinparam dpi 180
 skinparam componentStyle rectangle
-package "Frontend Vite / JavaScript modular" {
- [SPA y enrutador] as SPA
- [Auth sessionStorage] as FA
- [Cliente API fetch/Bearer] as API
- [Clientes] as C
- [Vehículos/novedades] as V
- [Celdas/estancias] as E
- [Contratos] as K
- [Obligaciones/pagos] as P
- [Usuarios] as U
- [Catálogo ilustrativo local] as Demo
- SPA --> C
- SPA --> V
- SPA --> E
- SPA --> K
- SPA --> P
- SPA --> U
- SPA --> Demo
- C --> API
- V --> API
- E --> API
- K --> API
- P --> API
- U --> API
- API --> FA
+skinparam packageStyle rectangle
+skinparam component {
+  BackgroundColor #F5F1FF
+  BorderColor #7653A6
+  ArrowColor #55436F
 }
-package "Backend Node/Express" {
- [Rutas auth] as AuthR
- [API REST /api/*] as ApiAll
- [Middleware JWT/roles] as Auth
- [Rutas clientes/vehículos/novedades] as Core
- [Rutas celdas/estancias] as Stay
- [Rutas contratos/obligaciones] as Contract
- [Ruta pagos/idempotencia/auditoría] as Pay
- [Rutas usuarios/resumen] as Other
- [Pool mysql2 y transacciones] as Pool
- ApiAll --> AuthR
- ApiAll --> Core
- ApiAll --> Stay
- ApiAll --> Contract
- ApiAll --> Pay
- ApiAll --> Other
- Core --> Auth
- Stay --> Auth
- Contract --> Auth
- Pay --> Auth
- Other --> Auth
- Core --> Pool
- Stay --> Pool
- Contract --> Pool
- Pay --> Pool
- Other --> Pool
+title Componentes del sistema y herramientas de reporte
+
+node "Navegador del usuario" as Browser {
+  component "Aplicación web\nHTML · CSS · JavaScript\ncon Vite" as Front
+  component "Vistas y navegación" as Views
+  component "Cliente API\nfetch + Bearer" as ApiClient
+  component "Sesión de usuario\nsessionStorage" as Session
+  component "Catálogo demostrativo\nlocal, no persistido" as Demo
+  Front ..> Views
+  Views ..> ApiClient
+  Front ..> Session
+  Views ..> Demo
 }
-database MySQL
-[Herramienta Java recaudos, API según docs] as JavaTool
-[Herramienta Python cartera, no ejecutada] as PyTool
-API --> ApiAll : HTTP JSON/Bearer
-Pool --> MySQL : SQL mysql2
-JavaTool --> ApiAll : HTTP API
-PyTool --> ApiAll : HTTP API documentado, ejecución pendiente
-note bottom of Demo
-Solo demostrativo, no comercial ni persistido.
+
+node "Proceso del servidor" as Server {
+  component "API REST\nNode.js · Express" as Express
+  component "Autenticación JWT\ny permisos por rol" as Auth
+  component "Gestión de clientes\ny usuarios" as People
+  component "Gestión de vehículos\ny novedades" as Cars
+  component "Gestión de celdas\ny estancias" as Stays
+  component "Gestión de contratos" as Contracts
+  component "Gestión de obligaciones\ny pagos" as Payments
+  component "Persistencia\npool y transacciones" as Persistence
+  Express ..> Auth
+  Express ..> People
+  Express ..> Cars
+  Express ..> Stays
+  Express ..> Contracts
+  Express ..> Payments
+  People ..> Persistence
+  Cars ..> Persistence
+  Stays ..> Persistence
+  Contracts ..> Persistence
+  Payments ..> Persistence
+}
+
+database "Base de datos MySQL" as MySQL
+
+node "Proceso de reporte Java" as JavaProcess {
+  component "Reporte de recaudos\nconsulta pagos y exporta CSV" as JavaReport
+}
+node "Proceso de reporte Python" as PythonProcess {
+  component "Reporte de cartera\nconsulta obligaciones y exporta CSV\nEjecución pendiente de verificación" as PythonReport
+}
+
+ApiClient ..> Express : HTTP/JSON\nAuthorization: Bearer
+Persistence ..> MySQL : Acceso SQL\nmediante mysql2
+JavaReport ..> Express : HTTP/JSON\nAPI autenticada
+PythonReport ..> Express : HTTP/JSON\nAPI autenticada; ejecución pendiente
+
+note bottom of Payments
+Los módulos son componentes lógicos dentro de una API Express;
+no son microservicios independientes. Las rutas consultan MySQL
+con el pool mysql2, sin una capa de repositorios separada.
 end note
-note bottom of Pay
-Los routers consultan mysql2 directamente; no se inventa capa servicio.
+note bottom of JavaReport
+Herramienta auxiliar de consola documentada.
+No equivale a conciliación bancaria.
+end note
+note bottom of PythonReport
+El código documenta consumo de la API; su ejecución sigue pendiente.
 end note
 @enduml
