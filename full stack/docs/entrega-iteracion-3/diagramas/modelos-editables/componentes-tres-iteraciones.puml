@@ -2,6 +2,7 @@
 skinparam backgroundColor #FFFFFF
 skinparam defaultFontColor #242238
 skinparam shadowing false
+ skinparam dpi 180
 skinparam componentStyle rectangle
 skinparam packageStyle rectangle
 skinparam component {
@@ -17,10 +18,10 @@ node "Navegador del usuario" as Browser {
   component "Cliente API\nfetch + Bearer" as ApiClient
   component "Sesión de usuario\nsessionStorage" as Session
   component "Catálogo demostrativo\nlocal, no persistido" as Demo
-  Front -- Views
-  Views -- ApiClient
-  Front -- Session
-  Views -- Demo
+  Front ..> Views
+  Views ..> ApiClient
+  Front ..> Session
+  Views ..> Demo
 }
 
 node "Proceso del servidor" as Server {
@@ -32,17 +33,17 @@ node "Proceso del servidor" as Server {
   component "Gestión de contratos" as Contracts
   component "Gestión de obligaciones\ny pagos" as Payments
   component "Persistencia\npool y transacciones" as Persistence
-  Express -- Auth
-  Express -- People
-  Express -- Cars
-  Express -- Stays
-  Express -- Contracts
-  Express -- Payments
-  People -- Persistence
-  Cars -- Persistence
-  Stays -- Persistence
-  Contracts -- Persistence
-  Payments -- Persistence
+  Express ..> Auth
+  Express ..> People
+  Express ..> Cars
+  Express ..> Stays
+  Express ..> Contracts
+  Express ..> Payments
+  People ..> Persistence
+  Cars ..> Persistence
+  Stays ..> Persistence
+  Contracts ..> Persistence
+  Payments ..> Persistence
 }
 
 database "Base de datos MySQL" as MySQL
@@ -54,10 +55,10 @@ node "Proceso de reporte Python" as PythonProcess {
   component "Reporte de cartera\nconsulta obligaciones y exporta CSV\nEjecución pendiente de verificación" as PythonReport
 }
 
-ApiClient --> Express : HTTP/JSON\nAuthorization: Bearer
-Persistence --> MySQL : Acceso SQL\nmediante mysql2
-JavaReport --> Express : HTTP/JSON\nAPI autenticada
-PythonReport --> Express : HTTP/JSON\nAPI autenticada; ejecución pendiente
+ApiClient ..> Express : HTTP/JSON\nAuthorization: Bearer
+Persistence ..> MySQL : Acceso SQL\nmediante mysql2
+JavaReport ..> Express : HTTP/JSON\nAPI autenticada
+PythonReport ..> Express : HTTP/JSON\nAPI autenticada; ejecución pendiente
 
 note bottom of Payments
 Los módulos son componentes lógicos dentro de una API Express;

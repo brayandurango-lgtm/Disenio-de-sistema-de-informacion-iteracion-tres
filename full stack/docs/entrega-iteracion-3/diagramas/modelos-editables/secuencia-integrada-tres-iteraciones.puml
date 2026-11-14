@@ -2,6 +2,7 @@
 skinparam backgroundColor #FFFFFF
 skinparam defaultFontColor #242238
 skinparam shadowing false
+ skinparam dpi 180
 skinparam sequence {
   ArrowColor #55436F
   LifeLineBorderColor #8C79A8
@@ -31,8 +32,8 @@ API --> Client: 201 + datos creados
 Client --> UI: Muestra registros
 
 note over Op,DB
-Antes de la entrada debe existir una celda habilitada.
-El operador puede consultar celdas y contratos disponibles.
+La ruta de entrada verifica que el vehículo exista y que la celda esté habilitada y libre.
+La ruta actual no consulta el contrato; aquí no se dibuja esa validación como implementada.
 end note
 
 Op -> UI: Crea contrato de mensualidad

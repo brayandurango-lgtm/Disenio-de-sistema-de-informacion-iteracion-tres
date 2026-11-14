@@ -3,6 +3,7 @@ left to right direction
 skinparam backgroundColor #FFFFFF
 skinparam defaultFontColor #242238
 skinparam shadowing false
+ skinparam dpi 180
 skinparam packageStyle rectangle
 skinparam usecase {
   BackgroundColor #F5F1FF
@@ -11,7 +12,7 @@ skinparam usecase {
 }
 skinparam actorStyle stickman
 
-title Autos Colombia — Casos de uso de pagos
+title Gestión de pagos de mensualidades
 
 actor Operador as Op
 actor Administrador as Admin

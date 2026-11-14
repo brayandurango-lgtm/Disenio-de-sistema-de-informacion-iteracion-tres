@@ -2,6 +2,7 @@
 skinparam backgroundColor #FFFFFF
 skinparam defaultFontColor #242238
 skinparam shadowing false
+ skinparam dpi 180
 skinparam sequence {
   ArrowColor #55436F
   LifeLineBorderColor #8C79A8
@@ -89,5 +90,6 @@ La vista reutiliza la misma clave para reintentar el mismo intento.
 El comprobante solo se presenta como confirmado al recibir o recuperar
 una respuesta exitosa del servidor. La clave se conserva en memoria;
 una recarga de página no garantiza recuperarla.
+La ruta actual coteja obligación y método al recuperar una clave existente; no compara todos los campos opcionales del payload.
 end note
 @enduml
