@@ -1,0 +1,41 @@
+[
+  {
+    "id": 7,
+    "contrato_id": 3,
+    "periodo": "2026-09",
+    "importe": "180000.00",
+    "fecha_vencimiento": "2026-10-05",
+    "estado": "pendiente",
+    "estado_efectivo": "vencida",
+    "vehiculo_id": 4,
+    "placa": "JKL012",
+    "cliente_id": 3,
+    "cliente_nombre": "Lucía Cárdenas Soto"
+  },
+  {
+    "id": 2,
+    "contrato_id": 1,
+    "periodo": "2026-11",
+    "importe": "120000.00",
+    "fecha_vencimiento": "2026-12-05",
+    "estado": "pendiente",
+    "estado_efectivo": "pendiente",
+    "vehiculo_id": 1,
+    "placa": "ABC123",
+    "cliente_id": 1,
+    "cliente_nombre": "Camila Rojas Peña"
+  },
+  {
+    "id": 1,
+    "contrato_id": 1,
+    "periodo": "2026-10",
+    "importe": "120000.00",
+    "fecha_vencimiento": "2026-11-05",
+    "estado": "pagada",
+    "estado_efectivo": "pagada",
+    "vehiculo_id": 1,
+    "placa": "ABC123",
+    "cliente_id": 1,
+    "cliente_nombre": "Camila Rojas Peña"
+  }
+]

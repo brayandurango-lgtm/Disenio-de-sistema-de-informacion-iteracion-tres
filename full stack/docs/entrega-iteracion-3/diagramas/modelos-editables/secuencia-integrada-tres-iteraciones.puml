@@ -1,0 +1,65 @@
+@startuml
+title Recorrido integrado — iteraciones 1, 2 y 3 (auxiliar)
+actor Operador as O
+participant "SPA/vistas" as FE
+participant "Cliente API fetch" as API
+participant "Express routers" as R
+participant "Middleware JWT/rol" as M
+database MySQL as DB
+O -> FE: Registrar cliente
+FE -> API: POST /api/clientes + Bearer
+API -> R: solicitud
+R -> M: autenticar
+R -> DB: INSERT cliente
+DB --> R: fila creada
+R --> API: 201 + ID
+API --> FE: respuesta JSON
+O -> FE: Crear vehículo y contrato
+FE -> API: POST /api/vehiculos, POST /api/contratos
+R -> M: autenticar
+R -> DB: INSERT; validar cliente y vigencia
+DB --> R: filas creadas
+R --> API: 201
+API --> FE: respuesta JSON
+O -> FE: Entrada/salida
+FE -> API: POST /api/estancias y POST /api/estancias/:id/salida
+R -> M: autenticar
+R -> DB: bloquear celda/vehículo; cerrar estancia
+DB --> R: resultado de consulta/operaciÃ³n
+R --> API: 200/201 o error
+API --> FE: respuesta JSON
+O -> FE: Generar obligaciones
+FE -> API: POST /api/contratos/:id/obligaciones/generar
+R -> M: autenticar
+R -> DB: transacción; validar vigencia; insertar faltantes/auditar
+DB --> R: generadas/omitidas
+R --> API: 201 + resumen
+API --> FE: respuesta JSON
+O -> FE: Pagar mensualidad
+FE -> API: POST /api/pagos + UUID
+R -> M: autenticar
+R -> DB: transacción; bloquear obligación; pago/estado/auditoría
+DB --> R: commit/rollback y filas
+R --> API: 201/200/error
+API --> FE: 201/200/error
+O -> FE: Consultar comprobante
+FE -> API: GET /api/pagos/:id/comprobante
+R -> M: autenticar
+R -> DB: SELECT
+DB --> R: datos del comprobante
+R --> API: 200 + comprobante
+API --> FE: comprobante interno
+O -> FE: Anular
+FE -> API: POST /api/pagos/:id/anular
+R -> M: autenticar + rol admin
+R -> DB: transacción; bloqueo; anular/pendiente/auditoría
+DB --> R: commit/rollback
+R --> API: 200/error
+API --> FE: respuesta JSON
+O -> FE: Re-pagar con clave nueva
+FE -> API: POST /api/pagos
+R -> DB: nueva transacción
+DB --> R: resultado del nuevo pago
+R --> API: 201/error
+API --> FE: respuesta JSON
+@enduml

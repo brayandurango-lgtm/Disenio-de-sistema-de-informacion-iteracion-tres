@@ -1,0 +1,16 @@
+{
+  "name": "autos-colombia-frontend",
+  "version": "1.0.0",
+  "description": "Frontend profesional e interactivo para Parqueadero Autos Colombia (Cyber Colombia)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --env-file=\"../back end/.env\" --env-file=\"../back end/.env.test\" --test \"test/**/*.test.js\"",
+    "test:unit": "node --test \"test/formatters.test.js\" \"test/idempotency.test.js\" \"test/catalogo-demo.test.js\""
+  },
+  "devDependencies": {
+    "vite": "^6.2.0"
+  }
+}

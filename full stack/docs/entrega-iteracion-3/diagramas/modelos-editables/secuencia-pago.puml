@@ -1,0 +1,41 @@
+@startuml
+title Transacción de pago e idempotencia (auxiliar)
+actor Operador as O
+participant "Vista pagos" as FE
+participant "Cliente API" as API
+participant "Router Express pagos" as R
+participant "Middleware auth" as M
+database MySQL as DB
+O -> FE: Confirma obligación/método
+FE -> API: POST /api/pagos + Bearer + UUID
+API -> R: solicitud
+R -> M: validar JWT y usuario
+M --> R: identidad
+R -> R: validar ID/método/UUID/fecha
+R -> DB: BEGIN; SELECT obligación FOR UPDATE
+DB --> R: importe/estado
+alt UUID existente equivalente
+ R -> DB: consultar pago por clave
+ R -> DB: COMMIT
+ R --> FE: 200 mismo pago
+else UUID existente con datos distintos
+ R -> DB: ROLLBACK
+ R --> FE: 409 IDEMPOTENCIA_CONFLICTO
+else obligación ya pagada
+ R -> DB: ROLLBACK
+ R --> FE: 409 OBLIGACION_YA_PAGADA
+else pendiente válido
+ R -> DB: bloqueo secuencia; insertar pago con importe servidor
+ R -> DB: actualizar obligación pagada
+ R -> DB: insertar auditoría
+ R -> DB: leer respuesta; COMMIT
+ R --> FE: 201 + CMP-AAAA-NNNNNN
+else validación/fallo SQL
+ R -> DB: ROLLBACK
+ R --> FE: error estructurado
+end
+note over FE
+Red perdida no prueba éxito ni rechazo.
+Retry en vista conserva UUID en memoria; recarga no garantizada.
+end note
+@enduml

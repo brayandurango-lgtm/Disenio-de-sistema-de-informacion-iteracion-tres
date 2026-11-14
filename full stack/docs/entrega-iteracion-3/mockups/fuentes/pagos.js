@@ -1,0 +1,1 @@
+const selector=document.querySelector("#view");const views=[...document.querySelectorAll("[data-view]")];function draw(){for(const v of views)v.hidden=v.dataset.view!==selector.value}selector.addEventListener("change",draw);draw();

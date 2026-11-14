@@ -1,0 +1,18 @@
+**/node_modules/
+**/dist/
+.backup_polish/
+**/.env
+**/.env.*
+!**/.env.example
+**/*.log
+.DS_Store
+
+# Artefactos generados por herramientas y pruebas
+**/coverage/
+**/target/
+**/__pycache__/
+**/*.py[cod]
+**/.venv/
+**/venv/
+reporte_cartera_*.csv
+recaudos_*.csv

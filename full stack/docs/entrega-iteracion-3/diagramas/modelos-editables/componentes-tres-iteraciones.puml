@@ -1,0 +1,70 @@
+@startuml
+title Componentes observados — auxiliar, no StarUML
+skinparam componentStyle rectangle
+package "Frontend Vite / JavaScript modular" {
+ [SPA y enrutador] as SPA
+ [Auth sessionStorage] as FA
+ [Cliente API fetch/Bearer] as API
+ [Clientes] as C
+ [Vehículos/novedades] as V
+ [Celdas/estancias] as E
+ [Contratos] as K
+ [Obligaciones/pagos] as P
+ [Usuarios] as U
+ [Catálogo ilustrativo local] as Demo
+ SPA --> C
+ SPA --> V
+ SPA --> E
+ SPA --> K
+ SPA --> P
+ SPA --> U
+ SPA --> Demo
+ C --> API
+ V --> API
+ E --> API
+ K --> API
+ P --> API
+ U --> API
+ API --> FA
+}
+package "Backend Node/Express" {
+ [Rutas auth] as AuthR
+ [API REST /api/*] as ApiAll
+ [Middleware JWT/roles] as Auth
+ [Rutas clientes/vehículos/novedades] as Core
+ [Rutas celdas/estancias] as Stay
+ [Rutas contratos/obligaciones] as Contract
+ [Ruta pagos/idempotencia/auditoría] as Pay
+ [Rutas usuarios/resumen] as Other
+ [Pool mysql2 y transacciones] as Pool
+ ApiAll --> AuthR
+ ApiAll --> Core
+ ApiAll --> Stay
+ ApiAll --> Contract
+ ApiAll --> Pay
+ ApiAll --> Other
+ Core --> Auth
+ Stay --> Auth
+ Contract --> Auth
+ Pay --> Auth
+ Other --> Auth
+ Core --> Pool
+ Stay --> Pool
+ Contract --> Pool
+ Pay --> Pool
+ Other --> Pool
+}
+database MySQL
+[Herramienta Java recaudos, API según docs] as JavaTool
+[Herramienta Python cartera, no ejecutada] as PyTool
+API --> ApiAll : HTTP JSON/Bearer
+Pool --> MySQL : SQL mysql2
+JavaTool --> ApiAll : HTTP API
+PyTool --> ApiAll : HTTP API documentado, ejecución pendiente
+note bottom of Demo
+Solo demostrativo, no comercial ni persistido.
+end note
+note bottom of Pay
+Los routers consultan mysql2 directamente; no se inventa capa servicio.
+end note
+@enduml

@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 650 340" fill="none" role="img" aria-label="Ilustración Camión Cyber">
+  <defs>
+    <linearGradient id="truckCab" x1="0%" y1="0%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#2c2c40" />
+      <stop offset="50%" stop-color="#191928" />
+      <stop offset="100%" stop-color="#101018" />
+    </linearGradient>
+    <linearGradient id="cargoBox" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1e2d" />
+      <stop offset="50%" stop-color="#141420" />
+      <stop offset="100%" stop-color="#0b0b12" />
+    </linearGradient>
+    <linearGradient id="truckViolet" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#A855F7" />
+      <stop offset="100%" stop-color="#C084FC" />
+    </linearGradient>
+    <filter id="truckGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Ground Grid Line -->
+  <line x1="20" y1="285" x2="630" y2="285" stroke="#222230" stroke-width="2" />
+  <line x1="50" y1="285" x2="600" y2="285" stroke="#A855F7" stroke-width="2" opacity="0.4" filter="url(#truckGlow)" />
+
+  <!-- Shadow & Underglow -->
+  <ellipse cx="330" cy="280" rx="280" ry="12" fill="#A855F7" opacity="0.25" filter="url(#truckGlow)" />
+  <ellipse cx="330" cy="280" rx="260" ry="8" fill="#000000" opacity="0.75" />
+
+  <!-- Cargo Container Box (Rear) -->
+  <rect x="50" y="80" width="370" height="155" rx="6" fill="url(#cargoBox)" stroke="#38384f" stroke-width="2" />
+  <!-- Container Reinforcement Ribs -->
+  <line x1="110" y1="80" x2="110" y2="235" stroke="#222230" stroke-width="2" />
+  <line x1="170" y1="80" x2="170" y2="235" stroke="#222230" stroke-width="2" />
+  <line x1="230" y1="80" x2="230" y2="235" stroke="#222230" stroke-width="2" />
+  <line x1="290" y1="80" x2="290" y2="235" stroke="#222230" stroke-width="2" />
+  <line x1="350" y1="80" x2="350" y2="235" stroke="#222230" stroke-width="2" />
+  
+  <!-- Cyber Cargo Graphic / Neon Trim -->
+  <path d="M 60 155 L 410 155" stroke="url(#truckViolet)" stroke-width="2.5" filter="url(#truckGlow)" />
+  <line x1="60" y1="175" x2="300" y2="175" stroke="#FF4057" stroke-width="2" />
+  <rect x="70" y="95" width="70" height="20" rx="3" fill="#09090F" stroke="#A855F7" stroke-width="1" />
+  <text x="76" y="109" fill="#A855F7" font-family="monospace" font-size="10" font-weight="bold">LOGISTICA</text>
+
+  <!-- Truck Cab Over Structure (Front) -->
+  <path d="M 430 240 
+           L 430 115 
+           L 480 75 
+           L 575 80 
+           Q 600 85, 605 130 
+           L 605 240 
+           L 575 255 
+           L 550 255 
+           A 42 42 0 0 0 466 255 
+           L 430 255 
+           Z" 
+        fill="url(#truckCab)" stroke="#38384f" stroke-width="2" />
+
+  <!-- Cab Windshield & Windows -->
+  <path d="M 500 90 L 565 95 L 590 145 L 515 145 Z" fill="#0c0c16" stroke="#A855F7" stroke-width="1.5" />
+  <path d="M 450 115 L 495 98 L 505 145 L 450 145 Z" fill="#0c0c16" stroke="#38384f" stroke-width="1.5" />
+
+  <!-- Cyber Aerodynamic Sunvisor -->
+  <polygon points="485,73 585,78 575,86 480,82" fill="#161621" stroke="#FF4057" stroke-width="1.5" />
+  <circle cx="530" cy="79" r="2" fill="#FF4057" filter="url(#truckGlow)" />
+  <circle cx="545" cy="80" r="2" fill="#FF4057" filter="url(#truckGlow)" />
+  <circle cx="560" cy="81" r="2" fill="#FF4057" filter="url(#truckGlow)" />
+
+  <!-- Cab Character Lines & Grille -->
+  <path d="M 430 155 L 600 160" stroke="url(#truckViolet)" stroke-width="2" filter="url(#truckGlow)" />
+  <line x1="520" y1="180" x2="595" y2="182" stroke="#222230" stroke-width="3" />
+  <line x1="520" y1="192" x2="595" y2="194" stroke="#222230" stroke-width="3" />
+  <line x1="520" y1="204" x2="595" y2="206" stroke="#222230" stroke-width="3" />
+
+  <!-- Headlights & Front Cyber Bumper -->
+  <polygon points="590,210 605,215 595,235 580,230" fill="url(#truckViolet)" filter="url(#truckGlow)" />
+  <line x1="605" y1="215" x2="635" y2="217" stroke="#C084FC" stroke-width="3" filter="url(#truckGlow)" />
+  <line x1="565" y1="242" x2="600" y2="245" stroke="#FF4057" stroke-width="3" />
+
+  <!-- Trailer Axles (Dual Rear Wheels) -->
+  <circle cx="140" cy="255" r="38" fill="#09090F" stroke="#222230" stroke-width="4" />
+  <circle cx="140" cy="255" r="24" fill="#161621" stroke="#A855F7" stroke-width="2" />
+  <circle cx="140" cy="255" r="10" fill="#FF4057" filter="url(#truckGlow)" />
+
+  <circle cx="230" cy="255" r="38" fill="#09090F" stroke="#222230" stroke-width="4" />
+  <circle cx="230" cy="255" r="24" fill="#161621" stroke="#A855F7" stroke-width="2" />
+  <circle cx="230" cy="255" r="10" fill="#FF4057" filter="url(#truckGlow)" />
+
+  <!-- Front Cab Wheel -->
+  <circle cx="508" cy="255" r="38" fill="#09090F" stroke="#222230" stroke-width="4" />
+  <circle cx="508" cy="255" r="24" fill="#161621" stroke="#A855F7" stroke-width="2" />
+  <circle cx="508" cy="255" r="10" fill="#FF4057" filter="url(#truckGlow)" />
+</svg>
