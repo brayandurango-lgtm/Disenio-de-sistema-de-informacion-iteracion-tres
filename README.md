@@ -9,7 +9,20 @@
 | A. Abrir interfaz web | [Abrir interfaz web — ejecución local](http://localhost:5173/) |
 | B. Consultar diagramas y documentación UML | [Fuentes UML y guía de StarUML](full%20stack/docs/entrega-iteracion-3/diagramas/README.md) |
 
-La carpeta de diagramas reúne cuatro vistas complementarias: permisos de pago, recorrido seguro de una mensualidad, operación integrada de las tres iteraciones y arquitectura de componentes. Consulta allí el estado de cada fuente y los pasos para llevarla a StarUML.
+## Diagramas UML
+
+Abre una vista en tamaño completo haciendo clic en su imagen. Los SVG son ideales para ampliar o insertar en el informe; los PNG están listos para una vista rápida. Las fuentes PlantUML y el estado de StarUML están en el [índice de diagramas](full%20stack/docs/entrega-iteracion-3/diagramas/README.md).
+
+<table>
+  <tr>
+    <td valign="top" width="50%"><a href="full%20stack/docs/entrega-iteracion-3/diagramas/exportaciones/casos-uso-iteracion-3.svg"><img src="full%20stack/docs/entrega-iteracion-3/diagramas/exportaciones/casos-uso-iteracion-3.png" alt="Diagrama de casos de uso de pagos" width="100%"></a><br><strong>1. Gestión de pagos de mensualidades</strong><br><a href="full%20stack/docs/entrega-iteracion-3/diagramas/modelos-editables/casos-uso-iteracion-3.puml">Fuente PlantUML</a> · <a href="full%20stack/docs/entrega-iteracion-3/diagramas/exportaciones/casos-uso-iteracion-3.png">PNG</a></td>
+    <td valign="top" width="50%"><a href="full%20stack/docs/entrega-iteracion-3/diagramas/exportaciones/secuencia-pago.svg"><img src="full%20stack/docs/entrega-iteracion-3/diagramas/exportaciones/secuencia-pago.png" alt="Secuencia de pago e idempotencia" width="100%"></a><br><strong>2. Pago e idempotencia</strong><br><a href="full%20stack/docs/entrega-iteracion-3/diagramas/modelos-editables/secuencia-pago.puml">Fuente PlantUML</a> · <a href="full%20stack/docs/entrega-iteracion-3/diagramas/exportaciones/secuencia-pago.png">PNG</a></td>
+  </tr>
+  <tr>
+    <td valign="top" width="50%"><a href="full%20stack/docs/entrega-iteracion-3/diagramas/exportaciones/secuencia-integrada-tres-iteraciones.svg"><img src="full%20stack/docs/entrega-iteracion-3/diagramas/exportaciones/secuencia-integrada-tres-iteraciones.png" alt="Secuencia integrada de las tres iteraciones" width="100%"></a><br><strong>3. Recorrido de las tres iteraciones</strong><br><a href="full%20stack/docs/entrega-iteracion-3/diagramas/modelos-editables/secuencia-integrada-tres-iteraciones.puml">Fuente PlantUML</a> · <a href="full%20stack/docs/entrega-iteracion-3/diagramas/exportaciones/secuencia-integrada-tres-iteraciones.png">PNG</a></td>
+    <td valign="top" width="50%"><a href="full%20stack/docs/entrega-iteracion-3/diagramas/exportaciones/componentes-tres-iteraciones.svg"><img src="full%20stack/docs/entrega-iteracion-3/diagramas/exportaciones/componentes-tres-iteraciones.png" alt="Componentes del sistema y herramientas de reporte" width="100%"></a><br><strong>4. Componentes del sistema</strong><br><a href="full%20stack/docs/entrega-iteracion-3/diagramas/modelos-editables/componentes-tres-iteraciones.puml">Fuente PlantUML</a> · <a href="full%20stack/docs/entrega-iteracion-3/diagramas/exportaciones/componentes-tres-iteraciones.png">PNG</a></td>
+  </tr>
+</table>
 
 El acceso web requiere iniciar localmente frontend, backend y los servicios que
 use la configuración. No es una página publicada en Internet: solo responde
@@ -64,7 +77,7 @@ en esta sesión; no son una certificación integral del sistema.
 | Unitarias backend y frontend | Hay resultados históricos en informes anteriores; no se reejecutaron para este cierre documental. Consulta cada README antes de interpretar esas cifras como actuales. |
 | Python | La herramienta y sus pruebas están en el árbol, pero no se ejecutaron: el diagnóstico de Etapa 1 no encontró un intérprete Python utilizable. |
 | Interfaz visual | No se validó en navegador durante los informes de Etapa 3. La lista de revisión manual está en la entrega técnica final. |
-| StarUML | Hay fuentes PlantUML auxiliares y guía manual; no se encontró proyecto `.mdj` ni exportaciones verificadas. |
+| Diagramas UML | Cuatro fuentes PlantUML y exportaciones SVG/PNG generadas localmente y revisadas visualmente; la construcción y validación del proyecto `.mdj` en StarUML siguen pendientes. |
 | Estado de base de datos | Los informes anteriores registran migraciones en ambas bases. No se conectó ni inspeccionó MySQL durante este cierre; confirma localmente el estado antes de usarlo. |
 
 ## Tabla de áreas web
